@@ -1,34 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'screens/chat_list_screen.dart';
 
-void main() {
-  // Устанавливаем светлый системный режим
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.white,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
-
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 
-class MainApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
-  const MainApp({super.key});
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Messenger',
+      title: 'Flutter Test Chat',
       theme: ThemeData(
-        primaryColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-        ),
+        primarySwatch: Colors.green,
       ),
-      //home: ChatListScreen(),
+      home: ChatListScreen(),
     );
   }
 }

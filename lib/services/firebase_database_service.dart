@@ -1,0 +1,75 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import '../models/user_model.dart';
+import '../models/chat_message_model.dart';
+import 'firebase_auth_service.dart';
+import 'package:logger/logger.dart';
+
+final _logger = Logger();
+
+class FirebaseDatabaseService {
+  static final _firestore = FirebaseFirestore.instance;
+
+  static Future<List<UserModel>> getUsers() async {
+    _logger.i('Fetching users from Firestore');
+    final snapshot = await _firestore.collection('users').get();
+    _logger.i('Users fetched: ${snapshot.docs.length}');
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return UserModel(
+        id: doc.id,
+        firstName: data['firstName'],
+        lastName: data['lastName'],
+        avatarColor: Color(int.parse(data['avatarColor'].replaceFirst('#', '0xff'))),
+        status: data['status'],
+      );
+    }).toList();
+  }
+
+
+
+  static Future<List<ChatMessageModel>> getMessages(String userId) async {
+    final snapshot = await _firestore
+        .collection('messages')
+        .where('receiverId', isEqualTo: userId)
+        .orderBy('timestamp', descending: true)
+        .get();
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return ChatMessageModel(
+        id: doc.id,
+        senderId: data['senderId'],
+        receiverId: data['receiverId'],
+        text: data['text'],
+        timestamp: data['timestamp'].toDate(),
+        status: _getMessageStatus(data['status']),
+      );
+    }).toList();
+  }
+
+  static Future<void> sendMessage(String receiverId, String text) async {
+    final user = await FirebaseAuthService.getCurrentUser();
+    if (user != null) {
+      await _firestore.collection('messages').add({
+        'senderId': user.uid,
+        'receiverId': receiverId,
+        'text': text,
+        'timestamp': Timestamp.now(),
+        'status': 'sent',
+      });
+    }
+  }
+
+  static MessageStatus _getMessageStatus(String status) {
+    switch (status) {
+      case 'sent':
+        return MessageStatus.sent;
+      case 'delivered':
+        return MessageStatus.delivered;
+      case 'read':
+        return MessageStatus.read;
+      default:
+        return MessageStatus.sent;
+    }
+  }
+}
