@@ -1,3 +1,3 @@
 # jumperbreaker_flutter_application_test_chat
 
-A new Flutter project.
+Пояснительная записка: https://disk.yandex.ru/i/w3lvlHwyAADM1w
