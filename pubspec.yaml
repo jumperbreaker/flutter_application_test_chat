@@ -13,6 +13,8 @@ dependencies:
   firebase_auth: ^4.2.5
   cloud_firestore: ^4.3.1
   logger: ^1.1.0
+  intl: ^0.17.0
+  connectivity_plus: ^3.0.2
   
 
 dev_dependencies:
@@ -22,3 +24,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+      - family: Gilroy
+        fonts:
+          - asset: lib/fonts/Gilroy-ExtraBold.otf
+          - asset: lib/fonts/Gilroy-Light.otf
+          - asset: lib/fonts/Gilroy-Medium.ttf
+          
+             
